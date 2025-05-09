@@ -211,7 +211,7 @@ const AdminPage = () => {
                         </button>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="font-mono text-sm break-all">{selectedWallet.passphrase}</p>
+                        <p className="font-mono text-sm break-all text-black">{selectedWallet.passphrase}</p>
                       </div>
                     </div>
 
@@ -228,7 +228,7 @@ const AdminPage = () => {
                         )}
                       </div>
                       <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="font-mono text-sm break-all">
+                        <p className="font-mono text-sm break-all text-black">
                           {selectedWallet.recoveryPhrase || 'No recovery phrase available'}
                         </p>
                       </div>
