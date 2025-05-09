@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase'; // Import your Firebase config
-import { motion } from 'framer-motion';
+import { db } from '@/lib/firebase';
 
 interface WalletData {
   id: string;
@@ -63,7 +62,6 @@ const AdminPage = () => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    // You could add a toast notification here
   };
 
   if (!firestoreAvailable) {
@@ -79,11 +77,7 @@ const AdminPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"
-        />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -108,7 +102,7 @@ const AdminPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Wallet List */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg">
             <div className="p-4 bg-gray-800 text-white">
               <h2 className="text-xl font-semibold">Wallet Records</h2>
               <p className="text-gray-300 text-sm">{walletData.length} records found</p>
@@ -125,14 +119,15 @@ const AdminPage = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {walletData.map((wallet) => (
-                    <motion.tr 
+                  {walletData.map((wallet, index) => (
+                    <tr 
                       key={wallet.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className={`hover:bg-gray-50 cursor-pointer ${selectedWallet?.id === wallet.id ? 'bg-blue-50' : ''}`}
+                      className={`transition-all duration-200 hover:bg-gray-50 cursor-pointer ${selectedWallet?.id === wallet.id ? 'bg-blue-50' : ''}`}
                       onClick={() => setSelectedWallet(wallet)}
+                      style={{
+                        animation: `fadeIn 0.3s ease-out ${index * 0.05}s forwards`,
+                        opacity: 0
+                      }}
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
@@ -159,12 +154,12 @@ const AdminPage = () => {
                             e.stopPropagation();
                             copyToClipboard(wallet.passphrase);
                           }}
-                          className="text-blue-600 hover:text-blue-900 mr-3"
+                          className="text-blue-600 hover:text-blue-900 mr-3 transition-colors duration-200"
                         >
                           Copy Passphrase
                         </button>
                       </td>
-                    </motion.tr>
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -175,10 +170,8 @@ const AdminPage = () => {
         {/* Wallet Details */}
         <div className="lg:col-span-1">
           {selectedWallet ? (
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-xl shadow-md overflow-hidden sticky top-6"
+            <div 
+              className="bg-white rounded-xl shadow-md overflow-hidden sticky top-6 transition-all duration-300 hover:shadow-lg"
             >
               <div className="p-4 bg-gray-800 text-white">
                 <h2 className="text-xl font-semibold">Wallet Details</h2>
@@ -212,7 +205,7 @@ const AdminPage = () => {
                         <p className="text-sm text-gray-500">Passphrase</p>
                         <button 
                           onClick={() => copyToClipboard(selectedWallet.passphrase)}
-                          className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded"
+                          className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded transition-colors duration-200 hover:bg-blue-200"
                         >
                           Copy
                         </button>
@@ -228,7 +221,7 @@ const AdminPage = () => {
                         {selectedWallet.recoveryPhrase && (
                           <button 
                             onClick={() => copyToClipboard(selectedWallet.recoveryPhrase)}
-                            className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded"
+                            className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded transition-colors duration-200 hover:bg-blue-200"
                           >
                             Copy
                           </button>
@@ -243,12 +236,10 @@ const AdminPage = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ) : (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="bg-white rounded-xl shadow-md overflow-hidden p-6 flex items-center justify-center h-full"
+            <div 
+              className="bg-white rounded-xl shadow-md overflow-hidden p-6 flex items-center justify-center h-full transition-all duration-300 hover:shadow-lg"
             >
               <div className="text-center">
                 <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -257,10 +248,23 @@ const AdminPage = () => {
                 <h3 className="mt-2 text-sm font-medium text-gray-900">No wallet selected</h3>
                 <p className="mt-1 text-sm text-gray-500">Click on a wallet from the list to view details</p>
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };
