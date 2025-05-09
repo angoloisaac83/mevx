@@ -57,3 +57,5 @@ export async function storeWalletData(walletData: any) {
 export function isFirestoreAvailable() {
   return !!db
 }
+
+export { db };
